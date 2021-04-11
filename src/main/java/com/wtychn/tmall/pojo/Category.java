@@ -21,9 +21,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Column(name = "id")
-    @ApiModelProperty(name = "id", value = "序号", dataType = "int")
     int id;
 
-    @ApiModelProperty(name = "name", value = "商品类名", dataType = "String")
     String name;
 }
