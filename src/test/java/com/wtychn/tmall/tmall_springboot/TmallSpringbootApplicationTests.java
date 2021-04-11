@@ -1,4 +1,4 @@
-package com.how2java.tmall.tmall_springboot;
+package com.wtychn.tmall.tmall_springboot;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

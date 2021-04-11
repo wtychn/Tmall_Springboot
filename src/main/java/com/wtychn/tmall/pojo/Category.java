@@ -1,4 +1,4 @@
-package com.how2java.tmall.pojo;
+package com.wtychn.tmall.pojo;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,30 +8,22 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Entity
 @Table(name = "category")
 @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
-
+@Data
+@ApiModel(value = "商品类别")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    @Column(name = "id")	
+    @Column(name = "id")
+    @ApiModelProperty(name = "id", value = "序号", dataType = "int")
     int id;
-    
+
+    @ApiModelProperty(name = "name", value = "商品类名", dataType = "String")
     String name;
-    
-	public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
 }

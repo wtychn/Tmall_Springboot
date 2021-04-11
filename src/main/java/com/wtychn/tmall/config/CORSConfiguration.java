@@ -1,4 +1,4 @@
-package com.how2java.tmall.config;
+package com.wtychn.tmall.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

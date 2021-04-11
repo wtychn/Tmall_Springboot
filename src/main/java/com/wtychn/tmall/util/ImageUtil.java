@@ -1,4 +1,4 @@
-package com.how2java.tmall.util;
+package com.wtychn.tmall.util;
   
 import java.awt.Image;
 import java.awt.Toolkit;

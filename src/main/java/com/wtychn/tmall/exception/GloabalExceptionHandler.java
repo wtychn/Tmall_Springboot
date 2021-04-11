@@ -1,4 +1,4 @@
-package com.how2java.tmall.exception;
+package com.wtychn.tmall.exception;
 
 
 import javax.servlet.http.HttpServletRequest;

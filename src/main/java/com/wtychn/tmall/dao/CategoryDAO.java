@@ -1,8 +1,7 @@
-package com.how2java.tmall.dao;
+package com.wtychn.tmall.dao;
  
+import com.wtychn.tmall.pojo.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.how2java.tmall.pojo.Category;
 
 public interface CategoryDAO extends JpaRepository<Category,Integer>{
 

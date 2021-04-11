@@ -1,4 +1,4 @@
-package com.how2java.tmall.web;
+package com.wtychn.tmall.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

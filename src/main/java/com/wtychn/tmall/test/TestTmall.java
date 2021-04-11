@@ -1,4 +1,4 @@
-package com.how2java.tmall.test;
+package com.wtychn.tmall.test;
   
 import java.sql.Connection;
 import java.sql.DriverManager;

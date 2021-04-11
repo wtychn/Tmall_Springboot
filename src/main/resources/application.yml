@@ -25,3 +25,6 @@ spring:
 
 server:
   context-path: /tmall_springboot
+
+swagger:
+  enabled: true
