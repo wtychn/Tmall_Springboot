@@ -30,4 +30,6 @@ public class Product {
     private float promotePrice;
     private int stock;
     private Date createDate;
+    @Transient
+    private ProductImage firstProductImage;
 }

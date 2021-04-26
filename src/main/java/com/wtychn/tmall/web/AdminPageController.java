@@ -1,9 +1,11 @@
 package com.wtychn.tmall.web;
 
+import io.swagger.annotations.Api;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@Api(value = "页面跳转")
 public class AdminPageController {
 	@GetMapping(value="/admin")
 	public String admin(){

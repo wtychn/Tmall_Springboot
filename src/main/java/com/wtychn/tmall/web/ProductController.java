@@ -2,6 +2,7 @@ package com.wtychn.tmall.web;
 
 import com.wtychn.tmall.pojo.Product;
 import com.wtychn.tmall.service.CategoryService;
+import com.wtychn.tmall.service.ProductImageService;
 import com.wtychn.tmall.service.ProductService;
 import com.wtychn.tmall.util.Page4Navigator;
 import io.swagger.annotations.Api;
@@ -21,12 +22,18 @@ public class ProductController {
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    ProductImageService productImageService;
+
     @GetMapping("/categories/{cid}/products")
     @ApiOperation(value = "分页查询")
     public Page4Navigator<Product> list(@PathVariable("cid") int cid, @RequestParam(value = "start", defaultValue = "0") int start,@RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
         start = start<0?0:start;
 
-        return productService.list(cid, start, size,5 );
+        Page4Navigator<Product> page = productService.list(cid, start, size, 5);
+
+        productImageService.setFirstProductImages(page.getContent());
+        return page;
     }
 
     @GetMapping("/products/{id}")
