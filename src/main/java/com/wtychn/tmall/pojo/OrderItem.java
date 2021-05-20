@@ -17,7 +17,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "orderItem")
-@ApiModel(value = "订单实体类")
+@ApiModel(value = "订单详情")
 @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
 public class OrderItem {
     @Id

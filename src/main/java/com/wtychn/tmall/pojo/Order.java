@@ -22,7 +22,7 @@ import lombok.Data;
 @Entity
 @ApiModel(value = "订单")
 @Table(name = "order_")
-@JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
+@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +30,7 @@ public class Order {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name="uid")
-
+    @JoinColumn(name = "uid")
     private User user;
 
     private String orderCode;
@@ -55,31 +54,31 @@ public class Order {
     @Transient
     private String statusDesc;
 
-    public String getStatusDesc(){
-        if(null!=statusDesc)
+    public String getStatusDesc() {
+        if (null != statusDesc)
             return statusDesc;
-        String desc ="未知";
-        switch(status){
+        String desc = "未知";
+        switch (status) {
             case OrderService.waitPay:
-                desc="待付";
+                desc = "待付";
                 break;
             case OrderService.waitDelivery:
-                desc="待发";
+                desc = "待发";
                 break;
             case OrderService.waitConfirm:
-                desc="待收";
+                desc = "待收";
                 break;
             case OrderService.waitReview:
-                desc="等评";
+                desc = "等评";
                 break;
             case OrderService.finish:
-                desc="完成";
+                desc = "完成";
                 break;
             case OrderService.delete:
-                desc="刪除";
+                desc = "刪除";
                 break;
             default:
-                desc="未知";
+                desc = "未知";
         }
         statusDesc = desc;
         return statusDesc;
