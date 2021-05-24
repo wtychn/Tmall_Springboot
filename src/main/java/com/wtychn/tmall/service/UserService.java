@@ -26,11 +26,15 @@ public class UserService {
 
     public boolean isExist(String name) {
         User user = getByName(name);
-        return null!=user;
+        return null != user;
     }
 
     public User getByName(String name) {
         return userDAO.findByName(name);
+    }
+
+    public User get(String name, String password) {
+        return userDAO.getByNameAndPassword(name, password);
     }
 
     public void add(User user) {
