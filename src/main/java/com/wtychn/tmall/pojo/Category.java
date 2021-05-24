@@ -1,16 +1,13 @@
 package com.wtychn.tmall.pojo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Table(name = "category")
@@ -24,4 +21,15 @@ public class Category {
     int id;
 
     String name;
+
+    @Transient
+    List<Product> products;
+
+    @Transient
+    List<List<Product>> productsByRow;
+
+    @Override
+    public String toString() {
+        return "Category [id=" + id + ", name=" + name + "]";
+    }
 }
