@@ -1,9 +1,11 @@
 package com.wtychn.tmall.web;
 
+import io.swagger.annotations.Api;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@Api(value = "前台页面跳转")
 public class ForePageController {
     @GetMapping(value="/")
     public String index(){
