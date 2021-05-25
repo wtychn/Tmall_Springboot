@@ -3,6 +3,7 @@ package com.wtychn.tmall.service;
 import com.wtychn.tmall.dao.OrderItemDAO;
 import com.wtychn.tmall.pojo.Order;
 import com.wtychn.tmall.pojo.OrderItem;
+import com.wtychn.tmall.pojo.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,10 @@ public class OrderItemService {
             fill(order);
     }
 
+    public void update(OrderItem orderItem) {
+        orderItemDAO.save(orderItem);
+    }
+
     public void fill(Order order) {
         List<OrderItem> orderItems = listByOrder(order);
         float total = 0;
@@ -32,10 +37,37 @@ public class OrderItemService {
         order.setTotal(total);
         order.setOrderItems(orderItems);
         order.setTotalNumber(totalNumber);
+        order.setOrderItems(orderItems);
+    }
+
+    public void add(OrderItem orderItem) {
+        orderItemDAO.save(orderItem);
+    }
+
+    public OrderItem get(int id) {
+        return orderItemDAO.findOne(id);
+    }
+
+    public void delete(int id) {
+        orderItemDAO.delete(id);
+    }
+
+    public int getSaleCount(Product product) {
+        List<OrderItem> ois = listByProduct(product);
+        int result = 0;
+        for (OrderItem oi : ois) {
+            if (null != oi.getOrder())
+                if (null != oi.getOrder() && null != oi.getOrder().getPayDate())
+                    result += oi.getNumber();
+        }
+        return result;
+    }
+
+    public List<OrderItem> listByProduct(Product product) {
+        return orderItemDAO.findByProduct(product);
     }
 
     public List<OrderItem> listByOrder(Order order) {
         return orderItemDAO.findByOrderOrderByIdDesc(order);
     }
-
 }

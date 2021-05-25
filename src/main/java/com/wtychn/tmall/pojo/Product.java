@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -32,4 +33,20 @@ public class Product {
     private Date createDate;
     @Transient
     private ProductImage firstProductImage;
+    @Transient
+    private List<ProductImage> productSingleImages;
+    @Transient
+    private List<ProductImage> productDetailImages;
+    @Transient
+    private int reviewCount;
+    @Transient
+    private int saleCount;
+
+    @Override
+    public String toString() {
+        return "Product [id=" + id + ", category=" + category + ", name=" + name + ", subTitle=" + subTitle
+                + ", originalPrice=" + originalPrice + ", promotePrice=" + promotePrice + ", stock=" + stock
+                + ", createDate=" + createDate + ", firstProductImage=" + firstProductImage + ", reviewCount="
+                + reviewCount + ", saleCount=" + saleCount + "]";
+    }
 }
