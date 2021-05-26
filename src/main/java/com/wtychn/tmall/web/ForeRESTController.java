@@ -1,5 +1,6 @@
 package com.wtychn.tmall.web;
 
+import com.wtychn.tmall.comparator.*;
 import com.wtychn.tmall.pojo.*;
 import com.wtychn.tmall.service.*;
 import com.wtychn.tmall.util.Result;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,10 +106,44 @@ public class ForeRESTController {
 
     @GetMapping("forecheckLogin")
     @ApiOperation(value = "检测是否登录")
-    public Object checkLogin( HttpSession session) {
-        User user =(User)  session.getAttribute("user");
-        if(null!=user)
+    public Object checkLogin(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (null != user)
             return Result.success();
         return Result.fail("未登录");
+    }
+
+    @GetMapping("forecategory/{cid}")
+    @ApiOperation(value = "分类页")
+    public Object category(@PathVariable int cid, String sort) {
+        Category c = categoryService.get(cid);
+        productService.fill(c);
+        productService.setSaleAndReviewNumber(c.getProducts());
+        categoryService.removeCategoryFromProduct(c);
+
+        if (null != sort) {
+            switch (sort) {
+                case "review":
+                    c.getProducts().sort(new ProductReviewComparator());
+                    break;
+                case "date":
+                    c.getProducts().sort(new ProductDateComparator());
+                    break;
+
+                case "saleCount":
+                    c.getProducts().sort(new ProductSaleCountComparator());
+                    break;
+
+                case "price":
+                    c.getProducts().sort(new ProductPriceComparator());
+                    break;
+
+                case "all":
+                    c.getProducts().sort(new ProductAllComparator());
+                    break;
+            }
+        }
+
+        return c;
     }
 }
