@@ -349,4 +349,24 @@ public class ForeRESTController {
 
         return Result.success(map);
     }
+
+    @PostMapping("foredoreview")
+    @ApiOperation(value = "提交评论")
+    public Object doreview(HttpSession session, int oid, int pid, String content) {
+        Order o = orderService.get(oid);
+        o.setStatus(OrderService.finish);
+        orderService.update(o);
+
+        Product p = productService.get(pid);
+        content = HtmlUtils.htmlEscape(content);
+
+        User user = (User) session.getAttribute("user");
+        Review review = new Review();
+        review.setContent(content);
+        review.setProduct(p);
+        review.setCreateDate(new Date());
+        review.setUser(user);
+        reviewService.add(review);
+        return Result.success();
+    }
 }
