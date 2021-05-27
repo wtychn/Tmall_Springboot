@@ -1,6 +1,7 @@
 package com.wtychn.tmall.service;
 
 import com.wtychn.tmall.dao.ProductImageDAO;
+import com.wtychn.tmall.pojo.OrderItem;
 import com.wtychn.tmall.pojo.Product;
 import com.wtychn.tmall.pojo.ProductImage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,4 +54,9 @@ public class ProductImageService {
             setFirstProductImage(product);
     }
 
+    public void setFirstProductImagesOnOrderItems(List<OrderItem> ois) {
+        for (OrderItem orderItem : ois) {
+            setFirstProductImage(orderItem.getProduct());
+        }
+    }
 }
