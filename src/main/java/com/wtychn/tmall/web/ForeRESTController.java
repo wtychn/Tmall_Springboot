@@ -1,16 +1,19 @@
 package com.wtychn.tmall.web;
 
+import com.sun.deploy.net.MessageHeader;
 import com.wtychn.tmall.comparator.*;
 import com.wtychn.tmall.pojo.*;
 import com.wtychn.tmall.service.*;
 import com.wtychn.tmall.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Api(value = "前台功能")
@@ -30,6 +33,8 @@ public class ForeRESTController {
     OrderItemService orderItemService;
     @Autowired
     ReviewService reviewService;
+    @Autowired
+    OrderService orderService;
 
     @GetMapping("/forehome")
     @ApiOperation(value = "主页商品展示")
@@ -226,5 +231,65 @@ public class ForeRESTController {
         List<OrderItem> ois = orderItemService.listByUser(user);
         productImageService.setFirstProductImagesOnOrderItems(ois);
         return ois;
+    }
+
+    @GetMapping("forechangeOrderItem")
+    @ApiOperation(value = "改订单量")
+    public Object changeOrderItem(HttpSession session, int pid, int num) {
+        User user = (User) session.getAttribute("user");
+        if (null == user)
+            return Result.fail("未登录");
+
+        List<OrderItem> ois = orderItemService.listByUser(user);
+        for (OrderItem oi : ois) {
+            if (oi.getProduct().getId() == pid) {
+                oi.setNumber(num);
+                orderItemService.update(oi);
+                break;
+            }
+        }
+        return Result.success();
+    }
+
+    @GetMapping("foredeleteOrderItem")
+    @ApiOperation(value = "删除订单")
+    public Object deleteOrderItem(HttpSession session, int oiid) {
+        User user = (User) session.getAttribute("user");
+        if (null == user)
+            return Result.fail("未登录");
+        orderItemService.delete(oiid);
+        return Result.success();
+    }
+
+    @PostMapping("forecreateOrder")
+    @ApiOperation(value = "创建订单")
+    public Object createOrder(@RequestBody Order order, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (null == user)
+            return Result.fail("未登录");
+        String orderCode = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + RandomUtils.nextInt(10000);
+        order.setOrderCode(orderCode);
+        order.setCreateDate(new Date());
+        order.setUser(user);
+        order.setStatus(OrderService.waitPay);
+        List<OrderItem> ois = (List<OrderItem>) session.getAttribute("ois");
+
+        float total = orderService.add(order, ois);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("oid", order.getId());
+        map.put("total", total);
+
+        return Result.success(map);
+    }
+
+    @GetMapping("forepayed")
+    @ApiOperation(value = "支付成功")
+    public Object payed(int oid) {
+        Order order = orderService.get(oid);
+        order.setStatus(OrderService.waitDelivery);
+        order.setPayDate(new Date());
+        orderService.update(order);
+        return order;
     }
 }
