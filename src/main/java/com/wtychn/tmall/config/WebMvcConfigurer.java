@@ -1,6 +1,5 @@
 package com.wtychn.tmall.config;
 
-import com.wtychn.tmall.interceptor.LoginInterceptor;
 import com.wtychn.tmall.interceptor.OtherInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,16 +14,9 @@ class WebMvcConfigurer extends WebMvcConfigurerAdapter {
         return new OtherInterceptor();
     }
 
-    @Bean
-    public LoginInterceptor getLoginIntercepter() {
-        return new LoginInterceptor();
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(getOtherIntercepter())
-                .addPathPatterns("/**");
-        registry.addInterceptor(getLoginIntercepter())
                 .addPathPatterns("/**");
     }
 }

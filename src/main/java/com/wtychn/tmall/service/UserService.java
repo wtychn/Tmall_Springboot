@@ -5,14 +5,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.wtychn.tmall.dao.UserDAO;
 import com.wtychn.tmall.pojo.User;
 import com.wtychn.tmall.util.Page4Navigator;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     UserDAO userDAO;
@@ -27,6 +33,15 @@ public class UserService {
     public boolean isExist(String name) {
         User user = getByName(name);
         return null != user;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userDAO.findByName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
+        return user;
     }
 
     public User getByName(String name) {
