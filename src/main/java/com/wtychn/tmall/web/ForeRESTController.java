@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
@@ -35,6 +36,8 @@ public class ForeRESTController {
     ReviewService reviewService;
     @Autowired
     OrderService orderService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @GetMapping("/forehome")
     @ApiOperation(value = "主页商品展示")
@@ -60,7 +63,7 @@ public class ForeRESTController {
             return Result.fail(message);
         }
 
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(password));
 
         userService.add(user);
 
