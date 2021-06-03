@@ -1,6 +1,9 @@
 package com.wtychn.tmall.config;
 
 import com.alibaba.fastjson.JSON;
+import com.wtychn.tmall.handler.MyAuthenticationFailureHandler;
+import com.wtychn.tmall.handler.MyAuthenticationSuccessHandler;
+import com.wtychn.tmall.interceptor.LoginFilter;
 import com.wtychn.tmall.service.UserService;
 import com.wtychn.tmall.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.PrintWriter;
 
@@ -71,24 +75,21 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.formLogin()
                 .loginPage("/login")
-                .loginProcessingUrl("/forelogin")
-                .usernameParameter("name")
-                .passwordParameter("password")
-                .successHandler((req, res, authentication) -> {
-                            res.setContentType("application/json;charset=utf-8");
-                            PrintWriter out = res.getWriter();
-                            out.write(JSON.toJSONString(Result.success()));
-                            out.flush();
-                            out.close();
-                        })
-                .failureHandler((req, res, e) -> {
-                            res.setContentType("application/json;charset=utf-8");
-                            PrintWriter out = res.getWriter();
-                            System.out.println(e.getMessage());
-                            out.write(JSON.toJSONString(Result.fail("账号密码错误")));
-                            out.flush();
-                            out.close();
-                        });
+                .and()
+                .addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
         http.logout().logoutUrl("/forelogout").permitAll();
+    }
+
+    @Bean
+    LoginFilter loginFilter() throws Exception{
+        LoginFilter loginFilter=new LoginFilter();
+        //设置认证成功返回
+        loginFilter.setAuthenticationSuccessHandler(new MyAuthenticationSuccessHandler());
+        //设置认证失败返回
+        loginFilter.setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
+        //这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
+        loginFilter.setAuthenticationManager(authenticationManagerBean());
+        loginFilter.setFilterProcessesUrl("/forelogin");
+        return loginFilter;
     }
 }
