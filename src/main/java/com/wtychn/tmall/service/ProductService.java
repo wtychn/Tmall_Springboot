@@ -1,9 +1,13 @@
 package com.wtychn.tmall.service;
 
 import com.wtychn.tmall.dao.ProductDAO;
+import com.wtychn.tmall.es.ProductESDAO;
 import com.wtychn.tmall.pojo.Category;
 import com.wtychn.tmall.pojo.Product;
 import com.wtychn.tmall.util.Page4Navigator;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -12,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +29,9 @@ public class ProductService {
 
     @Autowired
     ProductDAO productDAO;
+
+    @Autowired
+    ProductESDAO productESDAO;
 
     @Autowired
     CategoryService categoryService;
@@ -39,11 +48,13 @@ public class ProductService {
     @CacheEvict(allEntries = true)
     public void add(Product bean) {
         productDAO.save(bean);
+        productESDAO.save(bean);
     }
 
     @CacheEvict(allEntries = true)
     public void delete(int id) {
         productDAO.delete(id);
+        productESDAO.delete(id);
     }
 
     @Cacheable(key = "'products-one-'+ #p0")
@@ -54,6 +65,7 @@ public class ProductService {
     @CacheEvict(allEntries = true)
     public void update(Product bean) {
         productDAO.save(bean);
+        productESDAO.save(bean);
     }
 
     @Cacheable(key = "'products-cid-'+#p0+'-page-'+#p1 + '-' + #p2 ")
@@ -111,8 +123,27 @@ public class ProductService {
     }
 
     public List<Product> search(String keyword, int start, int size) {
+        initDatabase2ES();
+        FunctionScoreQueryBuilder functionScoreQueryBuilder = QueryBuilders.functionScoreQuery()
+                .add(QueryBuilders.matchPhraseQuery("name", keyword),
+                        ScoreFunctionBuilders.weightFactorFunction(100))
+                .scoreMode("sum")
+                .setMinScore(10);
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(start, size, sort);
-        return productDAO.findByNameLike("%" + keyword + "%", pageable);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withPageable(pageable)
+                .withQuery(functionScoreQueryBuilder).build();
+        Page<Product> page = productESDAO.search(searchQuery);
+        return page.getContent();
+    }
+
+    private void initDatabase2ES() {
+        Pageable pageable = new PageRequest(0, 5);
+        Page<Product> page = productESDAO.findAll(pageable);
+        if (page.getContent().isEmpty()) {
+            List<Product> products = productDAO.findAll();
+            productESDAO.save(products);
+        }
     }
 }
