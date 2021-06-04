@@ -1,4 +1,16 @@
 spring:
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password:
+    pool:
+      max-active: 10
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
+    timeout: 0
+
   datasource:
     druid:
       url: jdbc:mysql://127.0.0.1:3306/tmall_springboot?characterEncoding=UTF-8

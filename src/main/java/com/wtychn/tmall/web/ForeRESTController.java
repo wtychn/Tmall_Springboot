@@ -70,22 +70,6 @@ public class ForeRESTController {
         return Result.success();
     }
 
-//    @PostMapping("/forelogin")
-//    @ApiOperation(value = "登录")
-//    public Object login(@RequestBody User userParam, HttpSession session) {
-//        String name = userParam.getName();
-//        name = HtmlUtils.htmlEscape(name);
-//
-//        User user = userService.get(name, userParam.getPassword());
-//        if (null == user) {
-//            String message = "账号密码错误";
-//            return Result.fail(message);
-//        } else {
-//            session.setAttribute("user", user);
-//            return Result.success();
-//        }
-//    }
-
     @GetMapping("/foreproduct/{pid}")
     @ApiOperation(value = "商品详情页")
     public Object product(@PathVariable("pid") int pid) {
